@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, Dispatch, useEffect } from 'react';
 import api from '../services/api';
 import { Transaction, Goal, Profile } from '../types';
 
@@ -65,6 +65,9 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
         ...state,
         currentUser: null,
+        transactions: [],
+        goals: [],
+        currentProfile: null,
       };
     case 'SET_LOADING':
       return {
@@ -146,19 +149,35 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
+  // Verificar token ao carregar a aplicação
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Tentar validar o token e obter dados do usuário
+      api.get('/auth/me')
+        .then(response => {
+          dispatch({ type: 'SET_USER', payload: response.data });
+        })
+        .catch(() => {
+          localStorage.removeItem('token');
+        });
+    }
+  }, []);
+
   const login = async (email: string, password: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
       const response = await api.post('/auth/login', { email, password });
-      const { user, token } = response.data;
+      const { token, user } = response.data;
 
       localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
       dispatch({ type: 'SET_USER', payload: user });
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Falha ao fazer login' });
-      throw error;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Erro ao fazer login';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      throw new Error(errorMessage);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -167,16 +186,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const register = async (name: string, email: string, password: string) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
       const response = await api.post('/auth/register', { name, email, password });
-      const { user, token } = response.data;
+      const { token, user } = response.data;
 
       localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
       dispatch({ type: 'SET_USER', payload: user });
-    } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: 'Falha ao criar conta' });
-      throw error;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Erro ao criar conta';
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      throw new Error(errorMessage);
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
@@ -185,11 +205,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = async () => {
     try {
       await api.post('/auth/logout');
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
-      dispatch({ type: 'CLEAR_USER' });
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
+    } finally {
+      localStorage.removeItem('token');
+      dispatch({ type: 'CLEAR_USER' });
     }
   };
 
@@ -217,14 +237,14 @@ export const useApp = () => {
 export function useTransactions() {
   const { state, dispatch } = useApp();
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    dispatch({
-      type: 'ADD_TRANSACTION',
-      payload: {
-        ...transaction,
-        id: Date.now(), // Simplificado para exemplo
-      },
-    });
+  const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
+    try {
+      const response = await api.post('/transactions', transaction);
+      dispatch({ type: 'ADD_TRANSACTION', payload: response.data });
+    } catch (error) {
+      console.error('Erro ao adicionar transação:', error);
+      throw error;
+    }
   };
 
   return {
@@ -236,21 +256,24 @@ export function useTransactions() {
 export function useGoals() {
   const { state, dispatch } = useApp();
 
-  const addGoal = (goal: Omit<Goal, 'id'>) => {
-    dispatch({
-      type: 'ADD_GOAL',
-      payload: {
-        ...goal,
-        id: Date.now(), // Simplificado para exemplo
-      },
-    });
+  const addGoal = async (goal: Omit<Goal, 'id'>) => {
+    try {
+      const response = await api.post('/goals', goal);
+      dispatch({ type: 'ADD_GOAL', payload: response.data });
+    } catch (error) {
+      console.error('Erro ao adicionar meta:', error);
+      throw error;
+    }
   };
 
-  const updateGoalProgress = (goalId: number, amount: number) => {
-    dispatch({
-      type: 'UPDATE_GOAL_PROGRESS',
-      payload: { goalId, amount },
-    });
+  const updateGoalProgress = async (goalId: number, amount: number) => {
+    try {
+      await api.put(`/goals/${goalId}/progress`, { amount });
+      dispatch({ type: 'UPDATE_GOAL_PROGRESS', payload: { goalId, amount } });
+    } catch (error) {
+      console.error('Erro ao atualizar progresso da meta:', error);
+      throw error;
+    }
   };
 
   return {
@@ -263,8 +286,14 @@ export function useGoals() {
 export function useProfile() {
   const { state, dispatch } = useApp();
 
-  const setProfile = (profile: Profile) => {
-    dispatch({ type: 'SET_PROFILE', payload: profile });
+  const setProfile = async (profile: Profile) => {
+    try {
+      const response = await api.post('/profiles', profile);
+      dispatch({ type: 'SET_PROFILE', payload: response.data });
+    } catch (error) {
+      console.error('Erro ao definir perfil:', error);
+      throw error;
+    }
   };
 
   return {

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn } from 'lucide-react';
+import { LogIn, Loader2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const LoginForm: React.FC = () => {
@@ -8,8 +8,16 @@ const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { login } = useApp();
+  const { login, state } = useApp();
+
+  // Redirecionar se já estiver logado
+  useEffect(() => {
+    if (state.currentUser) {
+      navigate('/dashboard');
+    }
+  }, [state.currentUser, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,9 +26,14 @@ const LoginForm: React.FC = () => {
 
     try {
       await login(email, password);
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+      } else {
+        localStorage.removeItem('rememberMe');
+      }
       navigate('/dashboard');
-    } catch (err) {
-      setError('Falha ao fazer login. Verifique suas credenciais.');
+    } catch (err: any) {
+      setError(err.message || 'Falha ao fazer login. Verifique suas credenciais.');
     } finally {
       setLoading(false);
     }
@@ -52,6 +65,7 @@ const LoginForm: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             placeholder="seu@email.com"
             required
+            disabled={loading}
           />
         </div>
 
@@ -67,6 +81,7 @@ const LoginForm: React.FC = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             placeholder="••••••••"
             required
+            disabled={loading}
           />
         </div>
 
@@ -75,7 +90,10 @@ const LoginForm: React.FC = () => {
             <input
               id="remember"
               type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
               className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+              disabled={loading}
             />
             <label htmlFor="remember" className="ml-2 block text-sm text-text-light">
               Lembrar-me
@@ -86,6 +104,7 @@ const LoginForm: React.FC = () => {
             type="button"
             className="text-primary text-sm hover:text-primary-dark"
             onClick={() => {/* Implementar recuperação de senha */}}
+            disabled={loading}
           >
             Esqueceu a senha?
           </button>
@@ -98,7 +117,14 @@ const LoginForm: React.FC = () => {
             loading ? 'opacity-75 cursor-not-allowed' : ''
           }`}
         >
-          {loading ? 'Entrando...' : 'Entrar'}
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              Entrando...
+            </>
+          ) : (
+            'Entrar'
+          )}
         </button>
 
         <div className="text-center">
@@ -108,6 +134,7 @@ const LoginForm: React.FC = () => {
               type="button"
               onClick={() => navigate('/signup')}
               className="font-medium text-primary hover:text-primary-dark"
+              disabled={loading}
             >
               Criar conta
             </button>
