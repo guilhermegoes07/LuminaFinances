@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
+import { BarChart3, DollarSign, LogIn } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -29,21 +30,25 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg animate-fade-in">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Financial Manager
+          <div className="flex justify-center items-center space-x-2">
+            <BarChart3 className="h-8 w-8 text-primary" />
+            <DollarSign className="h-8 w-8 text-success" />
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-bold text-text">
+            Planejador Financeiro
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your account
+          <p className="mt-2 text-center text-sm text-text-muted">
+            Controle suas finanças de forma simples e eficiente
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-xl shadow-sm -space-y-px">
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                Email
               </label>
               <input
                 id="email-address"
@@ -51,15 +56,15 @@ const Login: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none rounded-t-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-text-muted text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 text-sm md:text-base transition-all"
+                placeholder="Seu email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                Senha
               </label>
               <input
                 id="password"
@@ -67,8 +72,8 @@ const Login: React.FC = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none rounded-b-xl relative block w-full px-4 py-3 border border-gray-300 placeholder-text-muted text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:z-10 text-sm md:text-base transition-all"
+                placeholder="Sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -78,9 +83,10 @@ const Login: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="group relative w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm md:text-base font-medium rounded-xl text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-150 ease-in-out"
             >
-              Sign in
+              <LogIn className="w-5 h-5 mr-2" />
+              Entrar
             </button>
           </div>
         </form>
