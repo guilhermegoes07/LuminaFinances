@@ -1,40 +1,5 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Planejador Financeiro - README</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 30px;
-      background-color: #f9f9f9;
-      color: #333;
-      line-height: 1.6;
-    }
-    h1, h2, h3 {
-      color: #2c3e50;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    code {
-      background: #eee;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-    .tag {
-      background-color: #3498db;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-  </style>
-</head>
-<body>
 
-  <h1>📊 Planejador Financeiro</h1>
+ <h1>📊 Planejador Financeiro</h1>
 
   <p><span class="tag">Projeto em desenvolvimento</span></p>
 
