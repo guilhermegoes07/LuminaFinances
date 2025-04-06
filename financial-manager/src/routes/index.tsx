@@ -1,31 +1,33 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from '../components/Dashboard';
-import Login from '../components/Login';
 import { useApp } from '../context/AppContext';
-import Layout from '../components/Layout';
+import Dashboard from '../components/Dashboard';
+import LandingPage from '../components/LandingPage';
 
-const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface PrivateRouteProps {
+  children: React.ReactNode;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const { state } = useApp();
-  return state.currentUser ? <>{children}</> : <Navigate to="/login" />;
+  return state.currentUser ? <>{children}</> : <Navigate to="/" />;
 };
 
 const Router: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LandingPage />} />
+        <Route path="/signup" element={<LandingPage />} />
         <Route
-          path="/"
+          path="/dashboard"
           element={
-            <Layout>
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            </Layout>
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
           }
         />
-        {/* Adicione mais rotas aqui */}
       </Routes>
     </BrowserRouter>
   );
