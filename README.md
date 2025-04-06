@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Planejador Financeiro - README</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .tag {
+      background-color: #3498db;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+  <h1>📊 Planejador Financeiro</h1>
 
-## About Laravel
+  <p><span class="tag">Projeto em desenvolvimento</span></p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+  <p>Um aplicativo moderno e responsivo para organização de finanças pessoais e empresariais, com foco em metas financeiras, controle de gastos e dicas inteligentes para o usuário.</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+  <hr>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+  <h2>✨ Funcionalidades</h2>
+  <ul>
+    <li>Cadastro de entradas e saídas financeiras.</li>
+    <li>Criação e acompanhamento de <strong>objetivos financeiros</strong>.</li>
+    <li>Dicas automáticas de economia e investimento.</li>
+    <li>Gerenciamento de <strong>contas fixas</strong> (mensais) e entradas recorrentes.</li>
+    <li>Perfis múltiplos: <em>pessoal</em>, <em>empresarial</em>, etc.</li>
+    <li>Relatórios e gráficos para visualização de performance financeira.</li>
+  </ul>
 
-## Learning Laravel
+  <h2>🛠️ Tecnologias Utilizadas</h2>
+  <ul>
+    <li><strong>Backend:</strong> PHP 8+, Laravel</li>
+    <li><strong>Frontend:</strong> Vue.js ou React + TailwindCSS</li>
+    <li><strong>Banco de Dados:</strong> MySQL / PostgreSQL</li>
+    <li><strong>Outros:</strong> Docker, Redis, AWS (opcional)</li>
+  </ul>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+  <h2>🚀 Como rodar o projeto</h2>
+  <ol>
+    <li>Clone este repositório:
+      <br><code>git clone https://github.com/seuusuario/planejador-financeiro.git</code>
+    </li>
+    <li>Instale as dependências do backend:
+      <br><code>composer install</code>
+    </li>
+    <li>Instale as dependências do frontend:
+      <br><code>npm install</code> ou <code>yarn install</code>
+    </li>
+    <li>Configure o arquivo <code>.env</code> e crie o banco de dados.</li>
+    <li>Execute as migrations:
+      <br><code>php artisan migrate</code>
+    </li>
+    <li>Inicie o servidor:
+      <br><code>php artisan serve</code>
+    </li>
+  </ol>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+  <h2>📅 Roadmap Futuro</h2>
+  <ul>
+    <li>[ ] Sistema de notificações personalizadas.</li>
+    <li>[ ] Integração com APIs financeiras para câmbio e investimentos.</li>
+    <li>[ ] Aplicativo mobile (React Native / Flutter).</li>
+    <li>[ ] Inteligência Artificial para sugestões personalizadas de finanças.</li>
+  </ul>
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+  <h2>🤝 Contribuição</h2>
+  <p>Contribuições são bem-vindas! Fique à vontade para abrir <code>Issues</code> ou enviar <code>Pull Requests</code>.</p>
 
-## Laravel Sponsors
+  <h2>📄 Licença</h2>
+  <p>Este projeto está licenciado sob a <strong>MIT License</strong>.</p>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+  <hr>
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+  <p align="center">Feito com ❤️ por Guilherme/LuminaCode</p>
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+</body>
+</html>
