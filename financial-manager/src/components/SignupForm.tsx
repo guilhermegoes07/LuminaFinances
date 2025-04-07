@@ -11,7 +11,7 @@ const SignupForm: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { register } = useApp();
+  const { register, error: contextError } = useApp();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +28,7 @@ const SignupForm: React.FC = () => {
       await register(name, email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Falha ao criar conta. Tente novamente.');
+      setError(contextError || 'Falha ao criar conta. Tente novamente.');
     } finally {
       setLoading(false);
     }

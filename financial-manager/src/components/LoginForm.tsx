@@ -10,14 +10,14 @@ const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { login, state } = useApp();
+  const { login, user, error: contextError } = useApp();
 
   // Redirecionar se já estiver logado
   useEffect(() => {
-    if (state.currentUser) {
+    if (user) {
       navigate('/dashboard');
     }
-  }, [state.currentUser, navigate]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ const LoginForm: React.FC = () => {
       }
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Falha ao fazer login. Verifique suas credenciais.');
+      setError(contextError || 'Falha ao fazer login. Verifique suas credenciais.');
     } finally {
       setLoading(false);
     }

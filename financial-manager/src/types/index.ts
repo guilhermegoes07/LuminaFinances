@@ -1,36 +1,38 @@
 export interface Transaction {
-  id: number;
-  type: 'income' | 'expense';
+  id: string;
   description: string;
   amount: number;
-  category: string;
+  type: 'income' | 'expense';
   date: string;
+  categoryId: string;
+  userId: string;
 }
 
 export interface Goal {
-  id: number;
+  id: string;
   title: string;
   targetAmount: number;
   currentAmount: number;
   deadline: string;
-  category: string;
+  userId: string;
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  profiles: {
-    id: number;
-    name: string;
-    type: 'personal' | 'business';
-  }[];
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  type: 'income' | 'expense';
+  userId: string;
 }
 
 export interface Profile {
-  id: number;
+  id: string;
   name: string;
-  type: 'personal' | 'business';
-  transactions: Transaction[];
-  goals: Goal[];
+  monthlyBudget: number;
+  userId: string;
 }

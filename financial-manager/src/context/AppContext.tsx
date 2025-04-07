@@ -1,230 +1,129 @@
-import React, { createContext, useContext, useReducer, ReactNode, Dispatch, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { User, Goal, Transaction } from '../types';
 import api from '../services/api';
-import { Transaction, Goal, Profile } from '../types';
-
-// Types
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-export interface AppState {
-  currentUser: User | null;
-  isLoading: boolean;
-  error: string | null;
-  transactions: Transaction[];
-  goals: Goal[];
-  currentProfile: Profile | null;
-}
-
-type AppAction =
-  | { type: 'SET_USER'; payload: User }
-  | { type: 'CLEAR_USER' }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string }
-  | { type: 'SET_TRANSACTIONS'; payload: Transaction[] }
-  | { type: 'ADD_TRANSACTION'; payload: Transaction }
-  | { type: 'UPDATE_TRANSACTION'; payload: Transaction }
-  | { type: 'DELETE_TRANSACTION'; payload: string }
-  | { type: 'SET_GOALS'; payload: Goal[] }
-  | { type: 'ADD_GOAL'; payload: Goal }
-  | { type: 'UPDATE_GOAL'; payload: Goal }
-  | { type: 'DELETE_GOAL'; payload: string }
-  | { type: 'SET_PROFILE'; payload: Profile }
-  | { type: 'UPDATE_GOAL_PROGRESS'; payload: { goalId: number; amount: number } };
 
 interface AppContextType {
-  state: AppState;
-  dispatch: Dispatch<AppAction>;
+  user: User | null;
+  token: string | null;
+  goals: Goal[];
+  transactions: Transaction[];
+  loading: boolean;
+  error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
+  updateGoalProgress: (goalId: string, progress: number) => Promise<void>;
 }
 
-// Initial state
-const initialState: AppState = {
-  currentUser: null,
-  isLoading: false,
-  error: null,
-  transactions: [],
-  goals: [],
-  currentProfile: null,
-};
-
-// Reducer
-const appReducer = (state: AppState, action: AppAction): AppState => {
-  switch (action.type) {
-    case 'SET_USER':
-      return {
-        ...state,
-        currentUser: action.payload,
-        error: null,
-      };
-    case 'CLEAR_USER':
-      return {
-        ...state,
-        currentUser: null,
-        transactions: [],
-        goals: [],
-        currentProfile: null,
-      };
-    case 'SET_LOADING':
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
-    case 'SET_ERROR':
-      return {
-        ...state,
-        error: action.payload,
-      };
-    case 'SET_TRANSACTIONS':
-      return {
-        ...state,
-        transactions: action.payload,
-      };
-    case 'ADD_TRANSACTION':
-      return {
-        ...state,
-        transactions: [...state.transactions, action.payload],
-      };
-    case 'UPDATE_TRANSACTION':
-      return {
-        ...state,
-        transactions: state.transactions.map((transaction) =>
-          transaction.id === action.payload.id ? action.payload : transaction
-        ),
-      };
-    case 'DELETE_TRANSACTION':
-      return {
-        ...state,
-        transactions: state.transactions.filter((transaction) => transaction.id !== action.payload),
-      };
-    case 'SET_GOALS':
-      return {
-        ...state,
-        goals: action.payload,
-      };
-    case 'ADD_GOAL':
-      return {
-        ...state,
-        goals: [...state.goals, action.payload],
-      };
-    case 'UPDATE_GOAL':
-      return {
-        ...state,
-        goals: state.goals.map((goal) =>
-          goal.id === action.payload.id ? action.payload : goal
-        ),
-      };
-    case 'DELETE_GOAL':
-      return {
-        ...state,
-        goals: state.goals.filter((goal) => goal.id !== action.payload),
-      };
-    case 'SET_PROFILE':
-      return {
-        ...state,
-        currentProfile: action.payload,
-      };
-    case 'UPDATE_GOAL_PROGRESS':
-      return {
-        ...state,
-        goals: state.goals.map((goal) =>
-          goal.id === action.payload.goalId
-            ? { ...goal, currentAmount: goal.currentAmount + action.payload.amount }
-            : goal
-        ),
-      };
-    default:
-      return state;
-  }
-};
-
-// Context
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Provider Component
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [transactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Verificar token ao carregar a aplicação
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Tentar validar o token e obter dados do usuário
-      api.get('/auth/me')
-        .then(response => {
-          dispatch({ type: 'SET_USER', payload: response.data });
-        })
-        .catch(() => {
-          localStorage.removeItem('token');
-        });
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
     }
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      dispatch({ type: 'SET_ERROR', payload: null });
+      setLoading(true);
+      setError(null);
+      const response = await api.post('/login', { email, password });
+      const { token: newToken, user: userData } = response.data;
 
-      const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
+      setToken(newToken);
+      setUser(userData);
 
-      localStorage.setItem('token', token);
-      dispatch({ type: 'SET_USER', payload: user });
+      localStorage.setItem('token', newToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Erro ao fazer login';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
-      throw new Error(errorMessage);
+      setError(error.response?.data?.message || 'Erro ao fazer login');
+      throw error;
     } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  };
-
-  const register = async (name: string, email: string, password: string) => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      dispatch({ type: 'SET_ERROR', payload: null });
-
-      const response = await api.post('/auth/register', { name, email, password });
-      const { token, user } = response.data;
-
-      localStorage.setItem('token', token);
-      dispatch({ type: 'SET_USER', payload: user });
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Erro ao criar conta';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
-      throw new Error(errorMessage);
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
+      setLoading(false);
     }
   };
 
   const logout = async () => {
     try {
-      await api.post('/auth/logout');
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    } finally {
+      setLoading(true);
+      setError(null);
+      await api.post('/logout');
+      setToken(null);
+      setUser(null);
       localStorage.removeItem('token');
-      dispatch({ type: 'CLEAR_USER' });
+      delete api.defaults.headers.common['Authorization'];
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Erro ao fazer logout');
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const value = {
-    state,
-    dispatch,
-    login,
-    register,
-    logout,
+  const register = async (name: string, email: string, password: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.post('/register', { name, email, password });
+      const { token: newToken, user: userData } = response.data;
+
+      setToken(newToken);
+      setUser(userData);
+
+      localStorage.setItem('token', newToken);
+      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Erro ao registrar');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  const updateGoalProgress = async (goalId: string, progress: number) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.put(`/goals/${goalId}`, { progress });
+      setGoals(goals.map(goal => goal.id === goalId ? response.data : goal));
+    } catch (error: any) {
+      setError(error.response?.data?.message || 'Erro ao atualizar meta');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        user,
+        token,
+        goals,
+        transactions,
+        loading,
+        error,
+        login,
+        logout,
+        register,
+        updateGoalProgress,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
 };
 
-// Hook
 export const useApp = () => {
   const context = useContext(AppContext);
   if (context === undefined) {
@@ -233,71 +132,4 @@ export const useApp = () => {
   return context;
 };
 
-// Hooks personalizados para ações comuns
-export function useTransactions() {
-  const { state, dispatch } = useApp();
-
-  const addTransaction = async (transaction: Omit<Transaction, 'id'>) => {
-    try {
-      const response = await api.post('/transactions', transaction);
-      dispatch({ type: 'ADD_TRANSACTION', payload: response.data });
-    } catch (error) {
-      console.error('Erro ao adicionar transação:', error);
-      throw error;
-    }
-  };
-
-  return {
-    transactions: state.transactions,
-    addTransaction,
-  };
-}
-
-export function useGoals() {
-  const { state, dispatch } = useApp();
-
-  const addGoal = async (goal: Omit<Goal, 'id'>) => {
-    try {
-      const response = await api.post('/goals', goal);
-      dispatch({ type: 'ADD_GOAL', payload: response.data });
-    } catch (error) {
-      console.error('Erro ao adicionar meta:', error);
-      throw error;
-    }
-  };
-
-  const updateGoalProgress = async (goalId: number, amount: number) => {
-    try {
-      await api.put(`/goals/${goalId}/progress`, { amount });
-      dispatch({ type: 'UPDATE_GOAL_PROGRESS', payload: { goalId, amount } });
-    } catch (error) {
-      console.error('Erro ao atualizar progresso da meta:', error);
-      throw error;
-    }
-  };
-
-  return {
-    goals: state.goals,
-    addGoal,
-    updateGoalProgress,
-  };
-}
-
-export function useProfile() {
-  const { state, dispatch } = useApp();
-
-  const setProfile = async (profile: Profile) => {
-    try {
-      const response = await api.post('/profiles', profile);
-      dispatch({ type: 'SET_PROFILE', payload: response.data });
-    } catch (error) {
-      console.error('Erro ao definir perfil:', error);
-      throw error;
-    }
-  };
-
-  return {
-    currentProfile: state.currentProfile,
-    setProfile,
-  };
-}
+export default AppContext;

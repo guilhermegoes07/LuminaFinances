@@ -1,12 +1,13 @@
 import React from 'react';
-import { useTransactions } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 import { Clock, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
+import { Transaction } from '../types';
 
 const RecentTransactions: React.FC = () => {
-  const { transactions } = useTransactions();
+  const { transactions } = useApp();
 
   const recentTransactions = transactions
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort((a: Transaction, b: Transaction) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
   const getTransactionIcon = (type: string) => {
@@ -44,7 +45,7 @@ const RecentTransactions: React.FC = () => {
                 <div className="flex items-center space-x-2 text-sm text-text-light">
                   <span>{new Date(transaction.date).toLocaleDateString('pt-BR')}</span>
                   <span>•</span>
-                  <span>{transaction.category}</span>
+                  <span>{transaction.categoryId}</span>
                 </div>
               </div>
             </div>

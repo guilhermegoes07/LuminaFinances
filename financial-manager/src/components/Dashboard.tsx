@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const [showTransactionForm, setShowTransactionForm] = useState(false);
-  const { logout } = useApp();
+  const { logout, goals, updateGoalProgress } = useApp();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -66,7 +66,7 @@ const Dashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           {/* Objetivos Financeiros */}
-          <FinancialGoals />
+          <FinancialGoals goals={goals} onAddProgress={updateGoalProgress} />
 
           {/* Últimas Transações */}
           <RecentTransactions />

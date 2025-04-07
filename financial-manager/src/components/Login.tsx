@@ -1,32 +1,22 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../types';
 import { BarChart3, DollarSign, LogIn } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { dispatch } = useApp();
+  const { login } = useApp();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual login logic
-    const mockUser: User = {
-      id: 1,
-      name: 'Test User',
-      email: email,
-      profiles: [
-        {
-          id: 1,
-          name: 'Personal',
-          type: 'personal'
-        }
-      ]
-    };
-    dispatch({ type: 'SET_USER', payload: mockUser });
-    navigate('/');
+    try {
+      await login(email, password);
+      navigate('/');
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
   };
 
   return (
