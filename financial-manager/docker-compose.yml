@@ -1,51 +1,49 @@
-version: '3.8'
-
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: financial-manager-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - DATABASE_URL=postgresql://financial_user:financial_password@db:5432/financial_manager
+    networks:
+      - financial-network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: financial-manager-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: financial_manager
+      POSTGRES_USER: financial_user
+      POSTGRES_PASSWORD: financial_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - financial-network
+    ports:
+      - "5432:5432"
+
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.frontend
     ports:
       - "3000:80"
     environment:
       - VITE_API_URL=http://localhost:8000/api
-    depends_on:
-      - backend
     networks:
-      - app-network
-
-  backend:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_DATABASE=financial_manager
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=financial_manager
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
+      - financial-network
 
 networks:
-  app-network:
+  financial-network:
     driver: bridge
 
 volumes:
