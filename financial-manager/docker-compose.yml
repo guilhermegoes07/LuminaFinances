@@ -1,18 +1,19 @@
+version: '3.8'
+
 services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile.backend
+      dockerfile: docker/backend/Dockerfile
     container_name: financial-manager-backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - PORT=8000
-      - DATABASE_URL=postgresql://financial_user:financial_password@db:5432/financial_manager
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/financial_manager
+      - JWT_SECRET=your_jwt_secret
     networks:
-      - financial-network
+      - app-network
     depends_on:
       - db
 
@@ -22,28 +23,32 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: financial_manager
-      POSTGRES_USER: financial_user
-      POSTGRES_PASSWORD: financial_password
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - financial-network
+      - app-network
     ports:
       - "5432:5432"
 
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile.frontend
+      dockerfile: docker/frontend/Dockerfile
+    container_name: financial-manager-frontend
     ports:
-      - "3000:80"
+      - "80:80"
     environment:
       - VITE_API_URL=http://localhost:8000/api
     networks:
-      - financial-network
+      - app-network
+    depends_on:
+      - backend
 
 networks:
-  financial-network:
+  app-network:
     driver: bridge
 
 volumes:
