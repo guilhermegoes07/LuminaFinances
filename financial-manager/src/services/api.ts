@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Transaction, Goal, Profile, User } from '../types';
+import { Transaction, Goal, User } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -71,29 +71,6 @@ export const goalService = {
   },
   delete: async (id: number): Promise<void> => {
     await api.delete(`/goals/${id}`);
-  },
-};
-
-// Serviços de perfil
-export const profileService = {
-  getAll: async (): Promise<Profile[]> => {
-    const response = await api.get('/profiles');
-    return response.data;
-  },
-  get: async (id: number): Promise<Profile> => {
-    const response = await api.get(`/profiles/${id}`);
-    return response.data;
-  },
-  create: async (profile: Omit<Profile, 'id'>): Promise<Profile> => {
-    const response = await api.post('/profiles', profile);
-    return response.data;
-  },
-  update: async (id: number, profile: Partial<Profile>): Promise<Profile> => {
-    const response = await api.put(`/profiles/${id}`, profile);
-    return response.data;
-  },
-  delete: async (id: number): Promise<void> => {
-    await api.delete(`/profiles/${id}`);
   },
 };
 
