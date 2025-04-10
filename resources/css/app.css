@@ -1,11 +1,101 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+        --primary: 204 70% 53%; /* #3498db */
+        --primary-foreground: 0 0% 100%;
+        --secondary: 145 63% 49%; /* #2ecc71 */
+        --secondary-foreground: 0 0% 100%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --accent: 48 96% 53%; /* #f1c40f */
+        --accent-foreground: 0 0% 100%;
+        --destructive: 6 78% 57%; /* #e74c3c */
+        --destructive-foreground: 0 0% 100%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 204 70% 53%;
+        --radius: 0.75rem;
+    }
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 204 70% 53%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 145 63% 49%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+        --accent: 48 96% 53%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 6 78% 57%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 204 70% 53%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground font-['Poppins'];
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex items-center justify-center rounded-xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+    }
+
+    .btn-primary {
+        @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-primary/20;
+    }
+
+    .btn-secondary {
+        @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-lg hover:shadow-secondary/20;
+    }
+
+    .btn-outline {
+        @apply border border-input hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .btn-sm {
+        @apply h-9 px-4 rounded-lg;
+    }
+
+    .btn-md {
+        @apply h-10 py-2 px-6 rounded-xl;
+    }
+
+    .btn-lg {
+        @apply h-12 px-8 rounded-xl text-lg;
+    }
+
+    .card {
+        @apply rounded-xl border bg-card text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300;
+    }
+
+    .input {
+        @apply flex h-12 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .label {
+        @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+    }
 }
